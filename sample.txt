@@ -1,0 +1,65 @@
+
+const removeActive = (items) => {
+    items.forEach(btn => {
+        btn.classList.remove('active')
+    })
+}
+
+export default removeActive;
+
+// displayUser
+import get from './getElement.js';
+import removeActive from './removeActive.js';
+
+const img = get('.user-img');
+const title = get('.user-title');
+const value = get('.user-value');
+const btns = [...document.querySelectorAll('.icon')]
+
+const displayUser = (person) => {
+    img.src = person.image;
+    value.textContent = person.name;
+    removeActive(btns);
+    btns[0].classList.add('active');
+
+    btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const category = btn.dataset.label;
+                title.textContent = `My ${category} ;is`;
+                value.textContent = person[category];
+                removeActive(btns);
+                btn.classList.add('active');
+        })
+    })
+}
+
+export default displayUser;
+
+// fetch user
+
+const URL = 'https://randomuser.me/api/';
+
+const getUser = async () => { 
+    const response = await fetch(URL);
+    const data = await response.json();
+
+    //  using destructure 
+    const person = data.results[0];
+    const {large: image} = person.picture
+    const {first, last} = person.name
+    const {email,phone} = person
+    const {street: {number, name}} = person.location
+    const {password} = person.login
+    const {age} = person.dob
+    return {
+        image,
+        email,
+        phone,
+        name: `${first} ${last}`,
+        street: `${number} ${name}`,
+        password,
+        age,
+    }
+}
+
+export default getUser
